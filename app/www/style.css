@@ -1,0 +1,17 @@
+html, body, #app {
+    padding: 0;
+    margin: 0;
+}
+.list-item {
+    border: 1px solid gray;
+    padding: 10px;
+    cursor: pointer;
+}
+.list-item:hover {
+    background-color: lightgrey;
+}
+.predicted-list-item {
+    border: 1px solid gray;
+    padding: 10px;
+    background-color: lightgreen;
+}

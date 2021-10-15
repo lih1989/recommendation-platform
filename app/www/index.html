@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="./www/style.css">
+  </head>
+  <body>
+    <div id="app">
+      <div style="width: 100%; display: flex; flex-direction: row">
+        <div style="min-width: 300px;max-width: 300px; height: 100vh;overflow: auto;">
+          <div v-for="(item, index) in allList" :key="index" class="list-item" @click="selectItem(item)">
+            <span v-html="item.name"></span>
+          </div>
+        </div>
+        <div style="flex: 1">
+          <div style="background-color: lightgrey; padding: 10px;">
+            <h3 v-html="JSON.stringify(sourceData)"></h3>
+          </div>
+          <div v-for="(item, index) in predictedList" :key="index" class="predicted-list-item">
+            <span v-html="JSON.stringify(item)"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script src="./www/vue.global.prod.js"></script>
+    <script>
+      console.warn('+++')
+      const app = Vue.createApp({
+        el: '#app',
+        data () {
+          return {
+            allList:[],
+            sourceData: null,
+            predictedList: []
+          }
+        },
+        methods: {
+          selectItem (item) {
+            console.warn('selectItem', item)
+            this.fetchPredict(item.id)
+          },
+          fetchPredict (id) {
+            fetch(`/api/sample/predict?id=${id}`).then(async (result) => {
+              const data = await result.json()
+              console.warn(data)
+              this.sourceData = data.sourceData
+              this.predictedList = data.predictedList
+            }).catch((error) => {
+              console.error(error)
+            })
+          }
+        },
+        mounted () {
+          fetch('/api/sample/list?start=5&end=55').then(async (result) => {
+            const data = await result.json()
+            console.warn(data)
+            this.allList = data.list
+            this.fetchPredict(data.list[0].id)
+          }).catch((error) => {
+            console.error(error)
+          })
+        }
+      })
+      app.mount('#app')
+    </script>
+  </body>
+</html>
